@@ -29,6 +29,10 @@ function App() {
     setToDos((prevToDos) => [newToDo, ...prevToDos]);
   }
 
+  function handleRemoveToDo(id: string) {
+    setToDos((prevToDos) => prevToDos.filter((toDo) => toDo.id !== id));
+  }
+
   return (
     <main className="app">
      
@@ -76,6 +80,10 @@ function App() {
           {filteredToDos.map((toDo) => (
             <li key={toDo.id} className="to-do-item">
               <span>{toDo.title}</span>
+              <button 
+              type="button"
+              className="to-do-remove-button"
+              onClick={() => handleRemoveToDo(toDo.id)}>🗑️</button>
             </li>
           ))}
         </ul>

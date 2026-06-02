@@ -8,7 +8,11 @@
 
 body {
  font-family: "Playwrite GB J", cursive;
-  background-image: url("./img/img-1.jpg");
+  background-image: linear-gradient(
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0.45)
+    ),
+  url("./img/img-1.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -23,6 +27,7 @@ input {
 
 button {
   cursor: pointer;
+  
 }
 .app-image {
   width: 100%;
@@ -97,6 +102,7 @@ button {
   background: #6540ab;
   color: #ffffff;
   font-weight: 700;
+  
 }
 
 .to-do-form button:hover {
@@ -116,6 +122,7 @@ button {
   border-radius: 999px;
   padding: 8px 14px;
   color: #374151;
+  border: 1px solid #6366f1;
 }
 
 .to-do-list {
@@ -130,4 +137,27 @@ button {
   border: 1px solid #e5e7eb;
   border-radius: 14px;
   background: #f9fafb;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.to-do-remove-button {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: #eef2f4;
+  font-weight: 700;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.to-do-remove-button:hover {
+  background: #d0cdf7;
+  transform: translateY(-1px);
+}
+
+.to-do-remove-button:active {
+  transform: translateY(0);
 }
