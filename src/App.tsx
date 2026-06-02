@@ -33,9 +33,16 @@ function App() {
     setToDos((prevToDos) => prevToDos.filter((toDo) => toDo.id !== id));
   }
 
+  function handleToggleToDo(id: string) {
+    setToDos((prevToDos) =>
+      prevToDos.map((toDo) =>
+        toDo.id === id ? { ...toDo, completed: !toDo.completed } : toDo,
+      ),
+    );
+  }
+
   return (
     <main className="app">
-     
       <section className="to-do-container">
         <header className="to-do-header">
           <p className="to-do-subtitle">Organize sua rotina</p>
@@ -79,11 +86,30 @@ function App() {
         <ul className="to-do-list">
           {filteredToDos.map((toDo) => (
             <li key={toDo.id} className="to-do-item">
-              <span>{toDo.title}</span>
-              <button 
-              type="button"
-              className="to-do-remove-button"
-              onClick={() => handleRemoveToDo(toDo.id)}>🗑️</button>
+              <label className="to-do-checkbox-area">
+                <input
+                  type="checkbox"
+                  checked={toDo.completed}
+                  onChange={() => handleToggleToDo(toDo.id)}
+                  aria-label={`Marcar tarefa como ${toDo.completed ? "pendente" : "concluída"}`}
+                />
+                <span
+                  className={
+                    toDo.completed ? "to-do-title-completed" : "to-do-title"
+                  }
+                >
+                  {toDo.title}
+                </span>
+              </label>
+              <button
+                type="button"
+                className="to-do-remove-button"
+                onClick={() => handleRemoveToDo(toDo.id)}
+                aria-label="Remover tarefa"
+                title="Remover tarefa"
+              >
+                🗑️
+              </button>
             </li>
           ))}
         </ul>
