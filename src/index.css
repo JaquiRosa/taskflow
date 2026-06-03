@@ -24,12 +24,7 @@ input {
 button {
   cursor: pointer;
 }
-.app-image {
-  width: 100%;
-  max-width: 320px;
-  margin-bottom: 24px;
-  display: block;
-}
+
 .app {
   min-height: 100vh;
   display: flex;
@@ -69,7 +64,6 @@ button {
 
 .to-do-description {
   color: #6b7280;
-  
 }
 
 .to-do-form {
@@ -115,7 +109,6 @@ button {
   border-radius: 999px;
   padding: 8px 14px;
   color: #374151;
-  border: 1px solid #d1d5db;
 }
 
 .to-do-list {
@@ -136,7 +129,8 @@ button {
   gap: 12px;
 }
 
-.to-do-remove-button, .to-do-detail-button {
+.to-do-remove-button,
+.to-do-detail-button {
   border: none;
   border-radius: 10px;
   width: 40px;
@@ -146,9 +140,14 @@ button {
   transition:
     background 0.2s ease,
     transform 0.2s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.to-do-remove-button:hover, .to-do-detail-button:hover {
+.to-do-remove-button:hover,
+.to-do-detail-button:hover {
   background: #d0cdf7;
   transform: translateY(-1px);
 }
@@ -187,7 +186,6 @@ button {
   text-decoration: line-through;
 }
 
-
 .to-do-details-form {
   display: flex;
   flex-direction: column;
@@ -222,13 +220,27 @@ button {
   margin-top: 8px;
 }
 
+.to-do-details-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 8px;
+}
+.to-do-message-area {
+  min-height: 20px;
+  flex: 1;
+}
+
 .to-do-back-button,
 .to-do-save-button {
   border: none;
   border-radius: 12px;
   padding: 12px 18px;
   font-weight: 700;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .to-do-back-button {
@@ -238,7 +250,6 @@ button {
 
 .to-do-back-button:hover {
   background: #d1d5db;
-  transform: translateY(-1px);
 }
 
 .to-do-save-button {
@@ -248,13 +259,11 @@ button {
 
 .to-do-save-button:hover {
   background: #572da4;
-  transform: translateY(-1px);
 }
 
-.to-do-save-area {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.to-do-back-button:hover,
+.to-do-save-button:hover {
+  transform: translateY(-1px);
 }
 
 .to-do-save-message {
