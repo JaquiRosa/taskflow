@@ -17,7 +17,8 @@ body {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -152,7 +153,8 @@ button {
   transform: translateY(-1px);
 }
 
-.to-do-remove-button:active {
+.to-do-remove-button:active,
+.to-do-detail-button:active {
   transform: translateY(0);
 }
 
@@ -168,6 +170,7 @@ button {
   height: 18px;
   cursor: pointer;
 }
+
 .to-do-actions {
   display: flex;
   align-items: center;
