@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ToDo, ToDoFilter } from "../../types/toDo";
 import { useNavigate } from "react-router-dom";
+import {Trash2, ChevronRight} from "lucide-react";
 
 export default function Home() {
   const [toDos, setToDos] = useState<ToDo[]>([]);
@@ -115,7 +116,7 @@ export default function Home() {
                   title="Detalhes da tarefa"
                   onClick={() => navigate(`/todos/${toDo.id}`)}
                 >
-                  &gt;
+                  <ChevronRight />
                 </button>
 
                 <button
@@ -125,7 +126,7 @@ export default function Home() {
                   aria-label="Remover tarefa"
                   title="Remover tarefa"
                 >
-                  🗑️
+                  <Trash2 />
                 </button>
               </div>
             </li>

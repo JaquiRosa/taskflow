@@ -69,6 +69,7 @@ button {
 
 .to-do-description {
   color: #6b7280;
+  
 }
 
 .to-do-form {
@@ -207,6 +208,7 @@ button {
   resize: vertical;
   outline: none;
   color: #111827;
+  font-family: "Playwrite GB J", cursive;
 }
 
 .to-do-details-textarea:focus {
