@@ -1,13 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ToDo, ToDoFilter } from "../../types/toDo";
 import { useNavigate } from "react-router-dom";
 import {Trash2, ChevronRight} from "lucide-react";
+import { API_URL } from "../../services/api";
 
 export default function Home() {
   const [toDos, setToDos] = useState<ToDo[]>([]);
   const [filter, setFilter] = useState<ToDoFilter>("all");
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function loadToDos() {
+      const response = await fetch(`${API_URL}/tasks`);
+      const data = await response.json();
+      setToDos(data);
+    }
+
+    loadToDos();
+  }, []);
+
 
   const filteredToDos = toDos.filter((toDo) => {
     if (filter === "pending") {
@@ -21,27 +33,57 @@ export default function Home() {
     return true;
   });
 
-  function handleAddToDo(title: string) {
-    const newToDo: ToDo = {
-      id: crypto.randomUUID(),
-      title,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    };
+ async function handleAddToDo(title: string) {
+  try {
+    const response = await fetch(`${API_URL}/tasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+      }),
+    });
+
+    const newToDo = await response.json();
 
     setToDos((prevToDos) => [newToDo, ...prevToDos]);
+  } catch (error) {
+    console.error("Error creating todo:", error);
+  }
+}
+
+  async function handleRemoveToDo(id: string) {
+    try {
+      await fetch(`${API_URL}/tasks/${id}`, {
+        method: "DELETE",
+      });
+
+      setToDos((prevToDos) => prevToDos.filter((toDo) => toDo.id !== id));
+    } catch (error) {
+      console.error("Error removing todo:", error);
+    }
   }
 
-  function handleRemoveToDo(id: string) {
-    setToDos((prevToDos) => prevToDos.filter((toDo) => toDo.id !== id));
-  }
+  async function handleToggleToDo(id: string) {
+    try {
+      const response = await fetch(`${API_URL}/tasks/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          completed: !toDos.find((toDo) => toDo.id === id)?.completed,
+        }),
+      });
 
-  function handleToggleToDo(id: string) {
-    setToDos((prevToDos) =>
-      prevToDos.map((toDo) =>
-        toDo.id === id ? { ...toDo, completed: !toDo.completed } : toDo,
-      ),
-    );
+      const updatedToDo = await response.json();
+      setToDos((prevToDos) =>
+        prevToDos.map((toDo) => (toDo.id === id ? updatedToDo : toDo))
+      );
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
   }
 
   return (

@@ -1,35 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { API_URL } from "../../services/api";
 
 export default function ToDoDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [description, setDescription] = useState(() => {
-    if (!id) {
-      return "";
-    }
-
-    return localStorage.getItem(`to-do-description-${id}`) ?? "";
-  });
-
+  const [description, setDescription] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  function handleSaveDescription() {
+  useEffect(() => {
+    async function loadToDoDetails() {
+      if (!id) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/tasks/${id}`);
+        const data = await response.json();
+
+        setDescription(data.description ?? "");
+      } catch (error) {
+        console.error("Error loading todo details:", error);
+      }
+    }
+
+    loadToDoDetails();
+  }, [id]);
+
+  async function handleSaveDescription() {
     if (!id) {
       return;
     }
 
-    setIsSaving(true);
-    setSuccessMessage("");
+    try {
+      setIsSaving(true);
+      setSuccessMessage("");
 
-    setTimeout(() => {
-      localStorage.setItem(`to-do-description-${id}`, description);
+      await fetch(`${API_URL}/tasks/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          description,
+        }),
+      });
 
-      setIsSaving(false);
       setSuccessMessage("Descrição de tarefa salva com sucesso!");
-    }, 800);
+    } catch (error) {
+      console.error("Error saving todo description:", error);
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -56,31 +80,31 @@ export default function ToDoDetails() {
             onChange={(event) => setDescription(event.target.value)}
           />
 
-            <div className="to-do-details-footer">
-              <div className="to-do-message-area">
-                {successMessage && (
-                  <span className="to-do-save-message">{successMessage}</span>
-                )}
-              </div>
+          <div className="to-do-details-footer">
+            <div className="to-do-message-area">
+              {successMessage && (
+                <span className="to-do-save-message">{successMessage}</span>
+              )}
+            </div>
 
-              <div className="to-do-details-actions">
-                <button
-                  type="button"
-                  className="to-do-back-button"
-                  onClick={() => navigate("/")}
-                >
-                  Voltar
-                </button>
+            <div className="to-do-details-actions">
+              <button
+                type="button"
+                className="to-do-back-button"
+                onClick={() => navigate("/")}
+              >
+                Voltar
+              </button>
 
-                <button
-                  type="button"
-                  className="to-do-save-button"
-                  onClick={handleSaveDescription}
-                  disabled={isSaving}
-                >
-                  {isSaving ? <span className="to-do-loading" /> : "Salvar"}
-                </button>
-             </div>
+              <button
+                type="button"
+                className="to-do-save-button"
+                onClick={handleSaveDescription}
+                disabled={isSaving}
+              >
+                {isSaving ? <span className="to-do-loading" /> : "Salvar"}
+              </button>
+            </div>
           </div>
         </div>
       </section>

@@ -60,6 +60,76 @@ app.post("/tasks", async (req, res) => {
   }
 });
 
+app.get("/tasks/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const task = await Task.findByPk(id);
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Task not found",
+      });
+    }
+
+    return res.status(200).json(task);
+  } catch (error) {
+    console.error("Error fetching task:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
+app.put("/tasks/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, completed } = req.body;
+
+    const task = await Task.findByPk(id);
+    if (!task) {
+      return res.status(404).json({
+        message: "Task not found",
+      });
+    }
+
+    await task.update({
+      title: title !== undefined ? title : task.title,
+      description: description !== undefined ? description : task.description,
+      completed: completed !== undefined ? completed : task.completed,
+    });
+
+    return res.status(200).json(task);
+  } catch (error) {
+    console.error("Error updating task:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
+app.delete("/tasks/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const task = await Task.findByPk(id);
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Task not found",
+      });
+    }
+
+    await task.destroy();
+
+    return res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
 sequelize
   .sync()
   .then(() => {
