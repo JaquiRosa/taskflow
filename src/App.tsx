@@ -1,16 +1,19 @@
 import "./index.css";
 import Home from "./pages/home";
 import ToDoDetails from "./pages/toDoDetails";
-import { BrowserRouter as Routes, Route, BrowserRouter } from "react-router-dom";
+import { 
+  BrowserRouter as Router, 
+  Routes, 
+  Route } from "react-router-dom";
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router basename="/taskflow">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/todos/:id" element={<ToDoDetails />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
