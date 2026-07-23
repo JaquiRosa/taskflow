@@ -86,16 +86,29 @@ button {
 }
 
 .to-do-form button {
+  min-width: 118px;
+  min-height: 50px;
+  display: grid;
+  place-items: center;
   border: none;
   border-radius: 12px;
   padding: 14px 20px;
   background: #6540ab;
   color: #ffffff;
   font-weight: 700;
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
 }
 
-.to-do-form button:hover {
+.to-do-form button:hover:not(:disabled) {
   background: #572da4;
+}
+
+.to-do-form input:disabled,
+.to-do-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
 }
 
 .to-do-filters {
@@ -256,16 +269,20 @@ button {
 }
 
 .to-do-save-button {
+  min-width: 90px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
   background: #6540ab;
   color: #ffffff;
 }
 
-.to-do-save-button:hover {
+.to-do-save-button:hover:not(:disabled) {
   background: #572da4;
 }
 
 .to-do-back-button:hover,
-.to-do-save-button:hover {
+.to-do-save-button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
@@ -278,6 +295,130 @@ button {
 .to-do-save-button:disabled {
   opacity: 0.8;
   cursor: not-allowed;
+}
+
+.to-do-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(4px);
+  animation: to-do-fade-in 0.2s ease-out;
+}
+
+.to-do-confirmation-modal {
+  width: min(100%, 440px);
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.3);
+  animation: to-do-modal-in 0.25s ease-out;
+}
+
+.to-do-confirmation-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  color: #6540ab;
+  background: #f0eafa;
+}
+
+.to-do-confirmation-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.to-do-confirmation-content {
+  margin-bottom: 24px;
+}
+
+.to-do-confirmation-subtitle {
+  margin-bottom: 6px;
+  color: #6540ab;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.to-do-confirmation-content h2 {
+  margin-bottom: 10px;
+  color: #111827;
+  font-size: 25px;
+}
+
+.to-do-confirmation-content p:last-child {
+  color: #6b7280;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.to-do-confirmation-content strong {
+  color: #374151;
+}
+
+.to-do-confirmation-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.to-do-cancel-button,
+.to-do-confirm-button {
+  min-width: 108px;
+  min-height: 44px;
+  border: none;
+  border-radius: 12px;
+  padding: 11px 18px;
+  font-weight: 700;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.to-do-cancel-button {
+  color: #374151;
+  background: #eef2f4;
+}
+
+.to-do-cancel-button:hover:not(:disabled) {
+  background: #dfe3e7;
+}
+
+.to-do-confirm-button {
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: #6540ab;
+}
+
+.to-do-confirm-button:hover:not(:disabled) {
+  background: #572da4;
+}
+
+.to-do-cancel-button:hover:not(:disabled),
+.to-do-confirm-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.to-do-cancel-button:focus-visible,
+.to-do-confirm-button:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.28);
+  outline-offset: 2px;
+}
+
+.to-do-cancel-button:disabled,
+.to-do-confirm-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
 }
 
 .to-do-loading {
@@ -293,5 +434,40 @@ button {
 @keyframes to-do-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes to-do-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes to-do-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+@media (max-width: 520px) {
+  .to-do-confirmation-modal {
+    padding: 24px;
+  }
+
+  .to-do-confirmation-actions {
+    flex-direction: column-reverse;
+  }
+
+  .to-do-cancel-button,
+  .to-do-confirm-button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .to-do-modal-overlay,
+  .to-do-confirmation-modal {
+    animation: none;
   }
 }

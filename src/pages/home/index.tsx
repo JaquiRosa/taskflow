@@ -7,6 +7,9 @@ import { API_URL } from "../../services/api";
 export default function Home() {
   const [toDos, setToDos] = useState<ToDo[]>([]);
   const [filter, setFilter] = useState<ToDoFilter>("all");
+  const [toDoToRemove, setToDoToRemove] = useState<ToDo | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const navigate = useNavigate();
 
@@ -20,6 +23,23 @@ export default function Home() {
     loadToDos();
   }, []);
 
+  useEffect(() => {
+    if (!toDoToRemove) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && !isRemoving) {
+        setToDoToRemove(null);
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [toDoToRemove, isRemoving]);
 
   const filteredToDos = toDos.filter((toDo) => {
     if (filter === "pending") {
@@ -33,35 +53,44 @@ export default function Home() {
     return true;
   });
 
- async function handleAddToDo(title: string) {
-  try {
-    const response = await fetch(`${API_URL}/tasks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-      }),
-    });
+  async function handleAddToDo(title: string) {
+    try {
+      setIsAdding(true);
 
-    const newToDo = await response.json();
+      const response = await fetch(`${API_URL}/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+        }),
+      });
 
-    setToDos((prevToDos) => [newToDo, ...prevToDos]);
-  } catch (error) {
-    console.error("Error creating todo:", error);
+      const newToDo = await response.json();
+
+      setToDos((prevToDos) => [newToDo, ...prevToDos]);
+    } catch (error) {
+      console.error("Error creating todo:", error);
+    } finally {
+      setIsAdding(false);
+    }
   }
-}
 
   async function handleRemoveToDo(id: string) {
     try {
+      setIsRemoving(true);
+
       await fetch(`${API_URL}/tasks/${id}`, {
         method: "DELETE",
       });
 
       setToDos((prevToDos) => prevToDos.filter((toDo) => toDo.id !== id));
+      setToDoToRemove(null);
     } catch (error) {
       console.error("Error removing todo:", error);
+    } finally {
+      setIsRemoving(false);
     }
   }
 
@@ -105,7 +134,7 @@ export default function Home() {
             const form = event.currentTarget;
             const input = form.elements.namedItem("toDo") as HTMLInputElement;
 
-            if (!input.value.trim()) {
+            if (!input.value.trim() || isAdding) {
               return;
             }
 
@@ -117,9 +146,20 @@ export default function Home() {
             name="toDo"
             type="text"
             placeholder="Digite uma nova tarefa..."
+            disabled={isAdding}
           />
 
-          <button type="submit">Adicionar</button>
+          <button type="submit" disabled={isAdding}>
+            {isAdding ? (
+              <span
+                className="to-do-loading"
+                role="status"
+                aria-label="Adicionando tarefa"
+              />
+            ) : (
+              "Adicionar"
+            )}
+          </button>
         </form>
 
         <div className="to-do-filters">
@@ -164,7 +204,7 @@ export default function Home() {
                 <button
                   type="button"
                   className="to-do-remove-button"
-                  onClick={() => handleRemoveToDo(toDo.id)}
+                  onClick={() => setToDoToRemove(toDo)}
                   aria-label="Remover tarefa"
                   title="Remover tarefa"
                 >
@@ -175,6 +215,64 @@ export default function Home() {
           ))}
         </ul>
       </section>
+
+      {toDoToRemove && (
+        <div
+          className="to-do-modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget && !isRemoving) {
+              setToDoToRemove(null);
+            }
+          }}
+        >
+          <section
+            className="to-do-confirmation-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="remove-to-do-title"
+            aria-describedby="remove-to-do-description"
+          >
+            <div className="to-do-confirmation-icon" aria-hidden="true">
+              <Trash2 />
+            </div>
+
+            <div className="to-do-confirmation-content">
+              <p className="to-do-confirmation-subtitle">Remover tarefa</p>
+              <h2 id="remove-to-do-title">Confirmar remoção</h2>
+              <p id="remove-to-do-description">
+                Tem certeza de que deseja remover{" "}
+                <strong>{toDoToRemove.title}</strong>? Esta ação não poderá ser
+                desfeita.
+              </p>
+            </div>
+
+            <div className="to-do-confirmation-actions">
+              <button
+                type="button"
+                className="to-do-cancel-button"
+                onClick={() => setToDoToRemove(null)}
+                disabled={isRemoving}
+                autoFocus
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                className="to-do-confirm-button"
+                onClick={() => handleRemoveToDo(toDoToRemove.id)}
+                disabled={isRemoving}
+              >
+                {isRemoving ? (
+                  <span className="to-do-loading" aria-label="Removendo" />
+                ) : (
+                  "Remover"
+                )}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

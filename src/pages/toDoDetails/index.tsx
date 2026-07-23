@@ -102,7 +102,15 @@ export default function ToDoDetails() {
                 onClick={handleSaveDescription}
                 disabled={isSaving}
               >
-                {isSaving ? <span className="to-do-loading" /> : "Salvar"}
+                {isSaving ? (
+                  <span
+                    className="to-do-loading"
+                    role="status"
+                    aria-label="Salvando descrição"
+                  />
+                ) : (
+                  "Salvar"
+                )}
               </button>
             </div>
           </div>
